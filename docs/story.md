@@ -16,7 +16,7 @@ happy path response:
 ```json
 {
   "payment_id": "xxx",
-  "payment_link": "https://demo.payment.com/payments/12345"
+  "payment_link": "https://demo.payment.com/payments/12345",
   "amount": 2022.33,
   "expired_at": "2022-03-26 20:30:00"
 }
