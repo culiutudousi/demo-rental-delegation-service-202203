@@ -74,4 +74,35 @@ public class PaymentClientTest {
         Assertions.assertEquals(createPaymentResponseDto.getPaymentLink(), responseBody.getPaymentLink());
         Assertions.assertEquals(createPaymentResponseDto.getExpiredAt(), responseBody.getExpiredAt());
     }
+
+    @Test
+    void should_get_payment() throws JsonProcessingException {
+        // given
+        String paymentId = "abcde";
+        CreatePaymentResponseDto responseBody = CreatePaymentResponseDto.builder()
+                .paymentId(paymentId)
+                .amount(BigDecimal.valueOf(3000))
+                .paymentLink("https://payment.demo.com/payments/abcde")
+                .expiredAt(addMinutes(new Date(), 15))
+                .build();
+        server
+                .when(
+                        request()
+                                .withMethod("GET")
+                                .withPath("/payments/" + paymentId)
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                                .withHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+                                .withBody(new ObjectMapper().writeValueAsString(responseBody))
+                );
+        // when
+        CreatePaymentResponseDto paymentResponseDto = paymentClient.getPayment(paymentId);
+        // then
+        Assertions.assertEquals(paymentId, paymentResponseDto.getPaymentId());
+        Assertions.assertEquals(responseBody.getAmount(), paymentResponseDto.getAmount());
+        Assertions.assertEquals(responseBody.getPaymentLink(), paymentResponseDto.getPaymentLink());
+        Assertions.assertEquals(responseBody.getExpiredAt().toString(), paymentResponseDto.getExpiredAt().toString());
+    }
 }
